@@ -1,15 +1,28 @@
 var express = require('express');
 var http = require('http');
 var socket_io = require('socket.io');
+var mongoose = require('mongoose');
 var app = express();
 
 app.use(express.static('public'));
 var server = http.Server(app);
 var io = socket_io(server);
 
+var options = { server: { socketOptions: { keepAlive: 1 } } };
+mongoose.connect('mongodb://localhost/chat-room-dev', options); // chat-room-dev is the database.
+mongoose.connection.on('connected', function(ref) { initApp(); }); //when connected we try to apply express application
+process.on('SIGINT', function() { //When you use control in gitbash, this event catches it and shuts down database.
+    console.log("Caught interrupt signal");
+  mongoose.disconnect(function() { console.log("disconnected perfectly."); process.exit(); });
+});
+
+function initApp() {
 
 
-app.get('/', function(req, res){
+
+
+
+  app.get('/', function(req, res){
   res.send('<h1>Hello world</h1>');
 });
 
@@ -57,3 +70,5 @@ server.listen(3000, function(){
   console.log('listening on *:3000');
 });
 // server.listen(process.env.PORT || 8080);
+
+}
