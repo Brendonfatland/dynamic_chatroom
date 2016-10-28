@@ -6,6 +6,7 @@ $(document).ready(function() {
   var activeUser = $("#activeUsers"); // Targets element in index.html useable to connect to server.
 
    var userName = prompt('What is your name?') ;
+   socket.emit('login', userName);
 
 //swal({
 //   title: "An input!",
@@ -31,13 +32,15 @@ $(document).ready(function() {
 
 
   var addMessage = function (message) {
-		messages.append('<div>' + userName + message + '</div>');
+		messages.append('<div>' + message + '</div>');
 	};
   socket.on('message', addMessage);
+
   var addUser = function (user) {
 		userlist.append('<div>' + user + '</div>');
 	};
   socket.on('new user', addUser);
+
 	var getUsers = function (users) {
 		userlist.empty(); // Clears out user list so the user being added is only the new one.
 		users.forEach(function(user){
@@ -46,18 +49,27 @@ $(document).ready(function() {
 	};
   socket.on('get users', getUsers);
 
-	socket.emit('login', userName);
 
-  input.on('keydown', function(event) {
-		if (event.keyCode != 13) {
-			return;
-		}
 
-        var message = userName + ': ' + input.val();
-        addMessage(message);
-        socket.emit('message', message);
-        input.val('');
-    });
+  // input.on('keydown', function(event) {
+	// 	if (event.keyCode != 13) {
+	// 		return;
+	// 	}
+  //
+  //       var message = userName + ': ' + input.val();
+  //       addMessage(message);
+  //       socket.emit('message', message);
+  //       input.val('');
+  //       return false;
+  //   });
+
+    $('form').submit(function(){
+  var message = userName + ': ' + $('#userInput').val();
+  socket.emit('message', message );
+  addMessage(message);
+  $('#userInput').val('');
+  return false;
+});
 
 
 

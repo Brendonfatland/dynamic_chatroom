@@ -18,7 +18,8 @@ var users = []; // array users
 var messagesArray = []; // array of messages.
 
 io.on('connection', function(socket) {
-	console.log('Client connected.');
+	console.log('connected.');
+  console.log(users);
 
   // On submit message
 	  socket.on('message', function(message) {
