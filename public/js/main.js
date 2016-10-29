@@ -8,29 +8,6 @@ $(document).ready(function() {
    var userName = prompt('What is your name?') ;
    socket.emit('login', userName);
 
-//swal({
-//   title: "An input!",
-//   text: "Write something interesting:",
-//   type: "input",
-//   showCancelButton: true,
-//   closeOnConfirm: false,
-//   animation: "slide-from-top",
-//   inputPlaceholder: "Write something"
-// },
-// function(inputValue){
-//   if (inputValue === false) return false;
-//
-//   if (inputValue === "") {
-//     swal.showInputError("You need to write something!");
-//     return false
-//   }
-//
-//   swal("Nice!", "You wrote: " + inputValue, "success");
-// }); ;
-
-
-
-
   var addMessage = function (message) {
 		messages.append('<div>' + message + '</div>');
 	};
@@ -49,29 +26,11 @@ $(document).ready(function() {
 	};
   socket.on('get users', getUsers);
 
-
-
-  // input.on('keydown', function(event) {
-	// 	if (event.keyCode != 13) {
-	// 		return;
-	// 	}
-  //
-  //       var message = userName + ': ' + input.val();
-  //       addMessage(message);
-  //       socket.emit('message', message);
-  //       input.val('');
-  //       return false;
-  //   });
-
-    $('form').submit(function(){
+  $('form').submit(function(){
   var message = userName + ': ' + $('#userInput').val();
   socket.emit('message', message );
   addMessage(message);
   $('#userInput').val('');
   return false;
 });
-
-
-
-
-  });
+});
