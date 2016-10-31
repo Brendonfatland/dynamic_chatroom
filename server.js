@@ -93,8 +93,8 @@ function initApp() {
         console.log(users);
         // newMsg.find(err)// return via socket to user. socket.emit
         Message.find({}, function(err, messages){
-         for (var message of messages)
-          socket.emit('message', message.msg ); // user who just connected.
+         for (var msg of messages)
+          socket.emit('message', msg); // user who just connected.
         });
 
         // On submit message
@@ -115,7 +115,7 @@ function initApp() {
                 console.log('mesages are now being reviedc console', messagesArray);
                 console.log('Message received: ', message);
                 socket.broadcast.emit('messages array is working', messagesArray);
-                socket.broadcast.emit('message', message);
+                socket.broadcast.emit('message', msg);
             });
         });
 
@@ -125,7 +125,7 @@ function initApp() {
             socket.emit('get users', users);
             console.log(user + ' just logged in');
             var loginMessage = user + ' just logged in';
-            socket.broadcast.emit('message', loginMessage);
+            socket.broadcast.emit('message', {msg: loginMessage});
             socket.broadcast.emit('new user', user);
 
             //On disconnet
@@ -135,7 +135,7 @@ function initApp() {
                     return name !== user;
                 });
                 var disconnectMessage = user + ' just logged out.';
-                socket.broadcast.emit('message', disconnectMessage);
+                socket.broadcast.emit('message', {msg: disconnectMessage});
                 socket.broadcast.emit('get users', users);
             });
         });
