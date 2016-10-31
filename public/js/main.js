@@ -29,7 +29,8 @@ $(document).ready(function() {
   $('form').submit(function(){
   var message = userName + ': ' + $('#userInput').val();
   socket.emit('message', message );
-  addMessage({msg: message}); // Put time stamp here. 
+  var currentTime = new Date();
+  addMessage({msg: message, created: currentTime.toISOString()}); // .toISOSString is a funny date method that formats into ISO format.
   $('#userInput').val('');
   return false;
 });
