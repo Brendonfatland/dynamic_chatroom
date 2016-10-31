@@ -125,7 +125,8 @@ function initApp() {
             socket.emit('get users', users);
             console.log(user + ' just logged in');
             var loginMessage = user + ' just logged in';
-            socket.broadcast.emit('message', {msg: loginMessage});
+            var currentTime = new Date();
+            socket.broadcast.emit('message', {msg: loginMessage , created: currentTime.toISOString()});
             socket.broadcast.emit('new user', user);
 
             //On disconnet
@@ -135,7 +136,8 @@ function initApp() {
                     return name !== user;
                 });
                 var disconnectMessage = user + ' just logged out.';
-                socket.broadcast.emit('message', {msg: disconnectMessage});
+                var currentTime = new Date();
+                socket.broadcast.emit('message', {msg: disconnectMessage , created: currentTime.toISOString()});
                 socket.broadcast.emit('get users', users);
             });
         });
