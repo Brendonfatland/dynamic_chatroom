@@ -9,7 +9,7 @@ $(document).ready(function() {
    socket.emit('login', userName);
 
   var addMessage = function (message) {
-		messages.append('<div>' + message.msg + '</div>');
+		messages.append('<div>'+ message.created + " "+ message.msg + '</div>');
 	};
   socket.on('message', addMessage);
 
@@ -29,7 +29,7 @@ $(document).ready(function() {
   $('form').submit(function(){
   var message = userName + ': ' + $('#userInput').val();
   socket.emit('message', message );
-  addMessage({msg: message});
+  addMessage({msg: message}); // Put time stamp here. 
   $('#userInput').val('');
   return false;
 });
