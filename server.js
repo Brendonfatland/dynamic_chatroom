@@ -9,7 +9,7 @@ var jsonParser = bodyParser.json();
 app.use(express.static('public'));
 var server = http.Server(app);
 var io = socket_io(server);
-var Messages = require('./models/Messages'); // going to Messages.js loading shcema to databse then assign to messages object.
+var Message = require('./models/Messages'); // going to Messages.js loading shcema to databse then assign to messages object.
 
 var options = {
     server: {
@@ -32,21 +32,32 @@ process.on('SIGINT', function() { //When you use control in gitbash, this event 
 
 function initApp() {
 
-    app.get('/messages/:usersMessage', function(req, res) {
+    // app.get('/messages/:usersMessage', function(req, res) {
+    //   var usersMessage = req.params.usersMessage;
+    //   console.log("The Get is working" + usersMessage);
+    //   res.json(Messages);
+    //
+    // });
 
-      var usersMessage = req.params.usersMessage;
-      console.log("The Get is working" + usersMessage);
-        res.send('<h1>Hello world</h1>');
+    app.get('/messages', function(req, res) {
+        Message.find({}, function(err, messages) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Internal Server Error'
+                });
+            }
+            res.json(messages);
+        });
     });
 
-
+    //--------------------------------------------------------
 
     //Updates Team Roster with WR PID's only
     app.put('/updates', function(req, res) { //app deafult name for express. then do this stuff below. Put messages
-      console.log("get a request!");
+        console.log("get a request!");
         // var _id = req.body.team_id; // how to get a field out of the request obejct.
 
-        Messages.findOneAndUpdate({     // Method call
+        Message.findOneAndUpdate({ // Method call
             type: String
         }, function(err, items) {
             if (err) {
@@ -58,34 +69,54 @@ function initApp() {
         });
     });
 
-    app.post('/messages', jsonParser, function(req, res){
-      console.log("messages");
-      var post = new Post({
-        type: req.body
-      });
-      post.save(function(err, post) {
-        if (err) {return next(err)}
-        res.json(201, post)
-  });
-  });
+    app.post('/input', jsonParser, function(req, res) {
+        Message.create({
+            name: req.body.name
+        }, function(err, message) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Internal Server Error'
+                });
+            }
+            console.log(message);
+            res.status(201).json(message);
+        });
+    });
+    //---------------------------------------------------------
 
     var users = []; // array users
     var messagesArray = []; // array of messages.
 
-    io.on('connection', function(socket) {
+    io.on('connection', function(socket) { // accept connection for single user, single socket for user.
         console.log('connected.');
         //Add message find , which gets all messages form DB and send to new clients.
         console.log(users);
+        // newMsg.find(err)// return via socket to user. socket.emit
+        Message.find({}, function(err, messages){
+         for (var message of messages)
+          socket.emit('message', message.msg ); // user who just connected.
+        });
 
         // On submit message
         socket.on('message', function(message) {
-            //save to monggoseDB here.
-            messagesArray.push(message);
-            socket.emit('messages are being recived now', messagesArray);
             console.log('mesages are now being reviedc console', messagesArray);
             console.log('Message received: ', message);
-            socket.broadcast.emit('messages array is working', messagesArray);
-            socket.broadcast.emit('message', message);
+            //Create message
+            var newMsg = new Message({
+                msg: message
+            });
+            //Save it to database
+            newMsg.save(function(err, msg) {
+                //Send message to those connected in the room
+                if (err) return console.error(err); // REally good way of doing all call backs with Function err.
+
+                messagesArray.push(message);
+                socket.emit('messages are being recived now', messagesArray);
+                console.log('mesages are now being reviedc console', messagesArray);
+                console.log('Message received: ', message);
+                socket.broadcast.emit('messages array is working', messagesArray);
+                socket.broadcast.emit('message', message);
+            });
         });
 
         // On login

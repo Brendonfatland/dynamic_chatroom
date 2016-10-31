@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
-var MessagesSchema = new mongoose.Schema({
-    messages: {
-        type: String
-    }
+var MessageSchema = new mongoose.Schema({
+        msg: { type: String, required: true },
+        created: {type: Date, default:Date.now}
+
 });
-var Messages = mongoose.model('Messages', MessagesSchema); //
-module.exports = Messages;
+
+
+var Message = mongoose.model('Message', MessageSchema); //compiling our schema into a model
+module.exports = Message; // Exporting module through project
 
 //postman
