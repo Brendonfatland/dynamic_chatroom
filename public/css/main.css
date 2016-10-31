@@ -46,7 +46,7 @@ body {
   width: 78%;
   height: 500px;
   border: solid black;
-  background: grey;
+  background: white;
 }
 form { background: #000; padding: 2px; width: 77.7%; display: inline-block; position: absolute; bottom:0px;
    }
@@ -58,3 +58,14 @@ form button { width: 11%; background: rgb(130, 224, 255); border: none; padding:
 #messages { list-style-type: none; margin: 0; padding: 0; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
+.time, .text{
+  display:inline-block;
+   background-color: white;
+overflow: hidden;
+}
+.text{
+  width: 814px;
+  z-index:1;
+  position: relative;
+  right:95px;
+}
