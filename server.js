@@ -8,7 +8,7 @@ var jsonParser = bodyParser.json();
 
 app.use(express.static('public')); // this finds hte index.html
 // var server = http.Server(app);
-var io = socket_io(server);
+var io = socket_io(app);
 var Message = require('./models/Messages'); // going to Messages.js loading shcema to databse then assign to messages object.
 
 var options = {
