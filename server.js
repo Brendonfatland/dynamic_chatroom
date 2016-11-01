@@ -18,7 +18,7 @@ var options = {
         }
     }
 };
-mongoose.connect('mongodb://localhost/chat-room-dev', options); // chat-room-dev is the database.
+mongoose.connect('mongodb://brendonfatland1337:Lovefat123@ds031581.mlab.com:31581/chatroom', options); // chat-room-dev is the database.
 mongoose.connection.on('connected', function(ref) {
     initApp();
 }); //when connected we try to apply express application
