@@ -7,8 +7,8 @@ var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
 app.use(express.static('public')); // this finds hte index.html
-// var server = http.Server(app);
-var io = socket_io(app);
+var server = http.Server(app);
+var io = socket_io(server);
 var Message = require('./models/Messages'); // going to Messages.js loading shcema to databse then assign to messages object.
 
 var options = {
@@ -91,7 +91,7 @@ function initApp() {
         });
     });
 
-    app.listen(process.env.PORT || 3000, function(){
-    console.log('listening on', app.address().port);
+    server.listen(process.env.PORT || 3000, function(){
+    console.log('listening on', server.address().port);
   });
 }
