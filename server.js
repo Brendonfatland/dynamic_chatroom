@@ -6,7 +6,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
-app.use(express.static('public'));
+app.use(express.static('public')); // this finds hte index.html
 var server = http.Server(app);
 var io = socket_io(server);
 var Message = require('./models/Messages'); // going to Messages.js loading shcema to databse then assign to messages object.
@@ -31,58 +31,6 @@ process.on('SIGINT', function() { //When you use control in gitbash, this event 
 });
 
 function initApp() {
-
-    // app.get('/messages/:usersMessage', function(req, res) {
-    //   var usersMessage = req.params.usersMessage;
-    //   console.log("The Get is working" + usersMessage);
-    //   res.json(Messages);
-    //
-    // });
-
-    app.get('/messages', function(req, res) {
-        Message.find({}, function(err, messages) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Internal Server Error'
-                });
-            }
-            res.json(messages);
-        });
-    });
-
-    //--------------------------------------------------------
-
-    //Updates Team Roster with WR PID's only
-    app.put('/updates', function(req, res) { //app deafult name for express. then do this stuff below. Put messages
-        console.log("get a request!");
-        // var _id = req.body.team_id; // how to get a field out of the request obejct.
-
-        Message.findOneAndUpdate({ // Method call
-            type: String
-        }, function(err, items) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Internal Server Error'
-                });
-            }
-            return res.json(items);
-        });
-    });
-
-    app.post('/input', jsonParser, function(req, res) {
-        Message.create({
-            name: req.body.name
-        }, function(err, message) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Internal Server Error'
-                });
-            }
-            console.log(message);
-            res.status(201).json(message);
-        });
-    });
-    //---------------------------------------------------------
 
     var users = []; // array users
     var messagesArray = []; // array of messages.
@@ -146,6 +94,4 @@ function initApp() {
     server.listen(3000, function() {
         console.log('listening on *:3000');
     });
-    // server.listen(process.env.PORT || 8080);
-
 }

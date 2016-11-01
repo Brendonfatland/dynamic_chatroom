@@ -6,25 +6,26 @@
     <title>Chatroom</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
   </head>
   <body>
-  <div class="container-div1">
-    <div class="session-div"><h1> sessions </h1></div>
-    <div class="topic-div"><h1>Topic</h1></div>
-  </div>
-  <div class="container-div2">
-    <div class="user-div"><h1>Users</h1><div class="user"></div></div>
-    <div class="chat-div"><h1>Chat</h1>
+
+  <div class="container">
+    <div class="row">
+    <div class="col-sm-6"><h1>Users</h1><div class="user"></div></div>
+    <div class="col-sm-6"><h1>Chat</h1>
       <div id="messages">Start</div>
       <form action="">
-        <input id="userInput" autocomplete="off" required/><button>Send</button>
+        <input id="userInput" autocomplete="off" required/><button>Send</button></input>
       </form>
-    </div>
+     </div>
   </div>
-  
+  </div>
+
      <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>

@@ -9,7 +9,7 @@ $(document).ready(function() {
    socket.emit('login', userName);
 
   var addMessage = function (message) {
-		messages.append('<div>'+ '<span class="time">' +  message.created + '</span>'  + " " + '<span class="text">' +  message.msg + '</span>' + '</div>');
+		messages.append('<div class="container">'+ '<span class="time">' +  message.created + '</span>'  + " " + '<span class="text">' +  message.msg + '</span>' + '</div>');
 	};
   socket.on('message', addMessage);
 
