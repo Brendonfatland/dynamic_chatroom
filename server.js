@@ -91,7 +91,7 @@ function initApp() {
         });
     });
 
-    server.listen(process.env.PORT || 3000, function(){
-    console.log('listening on', server.address().port);
+    app.listen(process.env.PORT || 3000, function(){
+    console.log('listening on', app.address().port);
   });
 }
