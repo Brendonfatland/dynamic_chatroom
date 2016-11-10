@@ -9,7 +9,7 @@ var jsonParser = bodyParser.json();
 app.use(express.static('public')); // this finds hte index.html
 var server = http.Server(app);
 var io = socket_io(server);
-var Message = require('./models/messages'); // going to Messages.js loading shcema to databse then assign to messages object.
+var Message = require('/models/messages'); // going to Messages.js loading shcema to databse then assign to messages object.
 
 var options = {
     server: {
