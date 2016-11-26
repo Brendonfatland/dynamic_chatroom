@@ -12,7 +12,9 @@ server.listen(port, function () {
 // Routing
 app.use(express.static(__dirname + '/public'));
 
-// Chatroom
+
+
+// Chatroom apps
 
 var numUsers = 0;
 
