@@ -1,85 +1,75 @@
+// Setup basic express server
 var express = require('express');
-var http = require('http');
-var socket_io = require('socket.io');
-var mongoose = require('mongoose');
 var app = express();
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var port = process.env.PORT || 8080;
 
-app.use(express.static('public')); // this finds hte index.html
-var server = http.Server(app);
-var io = socket_io(server);
-var Message = require('./models/messages'); // going to Messages.js loading shcema to databse then assign to messages object.
-
-var options = {
-    server: {
-        socketOptions: {
-            keepAlive: 1
-        }
-    }
-};
-
-mongoose.connect('mongodb://b.fatland@gmail.com:tkp2417@ds059516.mlab.com:59516/app'); // chat-room-dev is the database.
-
-var users = []; // array users
-var messagesArray = []; // array of messages.
-
-io.on('connection', function(socket) { // accept connection for single user, single socket for user.
-    console.log('connected.');
-    //Add message find , which gets all messages form DB and send to new clients.
-    console.log(users);
-    // newMsg.find(err)// return via socket to user. socket.emit
-    Message.find({}, function(err, messages){
-     for (var msg of messages)
-      socket.emit('message', msg); // user who just connected.
-    });
-
-    // On submit message
-    socket.on('message', function(message) {
-        console.log('mesages are now being reviedc console', messagesArray);
-        console.log('Message received: ', message);
-        //Create message
-        var newMsg = new Message({
-            msg: message
-        });
-        //Save it to database
-        newMsg.save(function(err, msg) {
-            //Send message to those connected in the room
-            if (err) return console.error(err); // REally good way of doing all call backs with Function err.
-
-            messagesArray.push(message);
-            socket.emit('messages are being recived now', messagesArray);
-            console.log('mesages are now being reviedc console', messagesArray);
-            console.log('Message received: ', message);
-            socket.broadcast.emit('messages array is working', messagesArray);
-            socket.broadcast.emit('message', msg);
-        });
-    });
-
-    // On login
-    socket.on('login', function(user) {
-        users.push(user);
-        socket.emit('get users', users);
-        console.log(user + ' just logged in');
-        var loginMessage = user + ' just logged in';
-        var currentTime = new Date();
-        socket.broadcast.emit('message', {msg: loginMessage , created: currentTime.toISOString()});
-        socket.broadcast.emit('new user', user);
-
-        //On disconnet
-        socket.on('disconnect', function() {
-            console.log('Client disconnected.');
-            users = users.filter(function(name) {
-                return name !== user;
-            });
-            var disconnectMessage = user + ' just logged out.';
-            var currentTime = new Date();
-            socket.broadcast.emit('message', {msg: disconnectMessage , created: currentTime.toISOString()});
-            socket.broadcast.emit('get users', users);
-        });
-    });
+server.listen(port, function () {
+  console.log('Server listening at port %d', port);
 });
 
-app.listen(process.env.PORT || 8080, function(){
-  console.log('listening on port 8080');
+// Routing
+app.use(express.static(__dirname + '/public'));
+
+// Chatroom
+
+var numUsers = 0;
+
+io.on('connection', function (socket) {
+  var addedUser = false;
+
+  // when the client emits 'new message', this listens and executes
+  socket.on('new message', function (data) {
+    // we tell the client to execute 'new message'
+    socket.broadcast.emit('new message', {
+      username: socket.username,
+      message: data
+    });
+  });
+
+  // when the client emits 'add user', this listens and executes
+  socket.on('add user', function (username) {
+    if (addedUser) return;
+
+    // we store the username in the socket session for this client
+    socket.username = username;
+    ++numUsers;
+    addedUser = true;
+    socket.emit('login', {
+      numUsers: numUsers
+    });
+    // echo globally (all clients) that a person has connected
+    socket.broadcast.emit('user joined', {
+      username: socket.username,
+      numUsers: numUsers
+    });
+  });
+
+  // when the client emits 'typing', we broadcast it to others
+  socket.on('typing', function () {
+    socket.broadcast.emit('typing', {
+      username: socket.username
+    });
+  });
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on('stop typing', function () {
+    socket.broadcast.emit('stop typing', {
+      username: socket.username
+    });
+  });
+
+  // when the user disconnects.. perform this
+  socket.on('disconnect', function () {
+    if (addedUser) {
+      --numUsers;
+
+      // echo globally that this client has left
+      socket.broadcast.emit('user left', {
+        username: socket.username,
+        numUsers: numUsers
+      });
+    }
+  });
 });
