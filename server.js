@@ -18,6 +18,7 @@ var options = {
         }
     }
 };
+
 mongoose.connect('mongodb://b.fatland@gmail.com:tkp2417@ds059516.mlab.com:59516/app'); // chat-room-dev is the database.
 
 var users = []; // array users
